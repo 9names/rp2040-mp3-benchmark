@@ -131,7 +131,10 @@ fn main() -> ! {
             };
             info!("Decoded {}", decoded);
         }
-        // todo: use samples from buf
+        unsafe { MP3GetLastFrameInfo(mp3dec, &mut frame) };
+        for _i in &buf[0..frame.outputSamps as usize] {
+            // todo: use these samples
+        }
     }
     let end_time = timer.get_counter_low();
     let elapsed = (end_time - start_time) as f64 / 1_000_000f64;
