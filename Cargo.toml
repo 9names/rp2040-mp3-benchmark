@@ -14,10 +14,10 @@ defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
 
 rp-pico = "0.7"
-rmp3 = { path = "../rmp3", default-features = false, features = [
-    "softfloat",
-    "mp1-mp2",
-] }
+# rmp3 = { path = "../rmp3", default-features = false, features = [
+#     "softfloat",
+#     "mp1-mp2",
+# ] }
 # picomp3lib-sys = { path = "../picomp3lib-sys" }
 adafruit-mp3-sys = { git = "https://github.com/9names/adafruit-mp3-rs", rev = "af837f1079878b7a6434b98fa93a42179207a9fc" }
 

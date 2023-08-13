@@ -52,7 +52,7 @@ fn main() -> ! {
     let mut led_pin = pins.led.into_push_pull_output();
 
     led_pin.set_high().unwrap();
-    let _start = timer.get_counter_low();
+    let start_time = timer.get_counter_low();
 
     info!("picomp3lib decoding start");
     type Mp3ptrT = *const u8;
@@ -106,18 +106,15 @@ fn main() -> ! {
     info!("Decoded {}", decoded);
 
     // TODO: decode the entire file
-    //let end = timer.get_counter_low()
-    //     let elapsed = (end - start) as f64 / 1_000_000f64;
-    //     info!(
-    //         "decoding took {} seconds which is {}% of realtime",
-    //         elapsed,
-    //         10f64 / elapsed
-    //     );;
+    let end_time = timer.get_counter_low();
+    let elapsed = (end_time - start_time) as f64 / 1_000_000f64;
+    info!(
+        "decoding took {} seconds which is {}% of realtime",
+        elapsed,
+        10f64 / elapsed
+    );
     info!("done");
-    loop {
-
-        // cortex_m::asm::nop();
-    }
+    loop {}
 }
 
 // End of file
