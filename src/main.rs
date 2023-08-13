@@ -84,6 +84,13 @@ fn main() -> ! {
         layer: 0,
         version: 0,
     };
+
+    info!(
+        "mp3ptr {:?}, mp3ptrptr {:?}, mp3ptrptr_pointee {:?}",
+        mp3ptr,
+        mp3ptrptr,
+        unsafe { *mp3ptrptr }
+    );
     let f = unsafe { MP3GetNextFrameInfo(mp3dec, &mut frame, mp3ptr) };
     info!("MP3GetNextFrameInfo response: {:?}", f);
     info!(
@@ -102,16 +109,36 @@ fn main() -> ! {
     let mut newlen = bytes_left as i32;
     let mut buf = [0i16; 4608 / 2];
 
-    let decoded = unsafe { MP3Decode(mp3dec, mp3ptrptr, &mut newlen, buf.as_mut_ptr(), 0) };
-    info!("Decoded {}", decoded);
-
-    // TODO: decode the entire file
+    while newlen > 0 {
+        let decoded = unsafe { MP3Decode(mp3dec, mp3ptrptr, &mut newlen, buf.as_mut_ptr(), 0) };
+        if decoded != 0 {
+            let decoded = match decoded {
+                0 => "Okay",
+                -1 => "ERR_MP3_INDATA_UNDERFLOW",
+                -2 => "ERR_MP3_MAINDATA_UNDERFLOW",
+                -3 => "ERR_MP3_FREE_BITRATE_SYNC",
+                -4 => "ERR_MP3_OUT_OF_MEMORY",
+                -5 => "ERR_MP3_NULL_POINTER",
+                -6 => "ERR_MP3_INVALID_FRAMEHEADER",
+                -7 => "ERR_MP3_INVALID_SIDEINFO",
+                -8 => "ERR_MP3_INVALID_SCALEFACT",
+                -9 => "ERR_MP3_INVALID_HUFFCODES",
+                -10 => "ERR_MP3_INVALID_DEQUANTIZE",
+                -11 => "ERR_MP3_INVALID_IMDCT",
+                -12 => "ERR_MP3_INVALID_SUBBAND",
+                -9999 => "ERR_UNKNOWN",
+                _ => "ERR_INVALID_ERROR",
+            };
+            info!("Decoded {}", decoded);
+        }
+        // todo: use samples from buf
+    }
     let end_time = timer.get_counter_low();
     let elapsed = (end_time - start_time) as f64 / 1_000_000f64;
     info!(
         "decoding took {} seconds which is {}% of realtime",
         elapsed,
-        10f64 / elapsed
+        (11f64 / elapsed) * 100f64
     );
     info!("done");
     loop {}
