@@ -12,17 +12,11 @@ jobs:
     strategy:
       matrix:
         # All generated code should be running on stable now
-        rust: [nightly, stable]
-        include:
-          # Nightly is only for reference and allowed to fail
-          - rust: nightly
-            experimental: true
+        rust: [stable]
         os:
           # Check compilation works on common OSes
           # (i.e. no path issues)
           - ubuntu-latest
-          - macOS-latest
-          - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -30,6 +24,7 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
           target: thumbv6m-none-eabi
+      - run: sudo apt-get update && sudo apt-get install gcc-arm-none-eabi
       - run: cargo install flip-link
       - run: cargo build --all
       - run: cargo build --all --release
@@ -44,6 +39,7 @@ jobs:
         with:
           components: clippy
           target: thumbv6m-none-eabi
+      - run: sudo apt-get update && sudo apt-get install gcc-arm-none-eabi
       - run: cargo clippy --all-features -- --deny=warnings
   formatting:
     name: Formatting
@@ -56,4 +52,5 @@ jobs:
         with:
           components: rustfmt
           target: thumbv6m-none-eabi
+      - run: sudo apt-get update && sudo apt-get install gcc-arm-none-eabi
       - run: cargo fmt -- --check

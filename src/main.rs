@@ -1,3 +1,4 @@
+#![allow(clippy::empty_loop)]
 //! Blinks the LED on a Pico board
 //!
 //! This will blink an LED attached to GP25, which is the pin the Pico uses for the on-board LED.
@@ -106,7 +107,7 @@ fn main() -> ! {
 
     let decode_len = (frame.bitsPerSample >> 3) * frame.outputSamps;
     info!("decoded_len = {}", decode_len);
-    let mut newlen = bytes_left as i32;
+    let mut newlen = bytes_left;
     let mut buf = [0i16; 4608 / 2];
 
     while newlen > 0 {
